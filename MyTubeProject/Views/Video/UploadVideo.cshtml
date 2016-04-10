@@ -1,0 +1,61 @@
+﻿@model IEnumerable<MyTubeProject.Models.Channel>
+@{
+    ViewBag.Title = "UploadVideo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h3>Channel</h3>
+    <select class="form-control" id="channel-dropdown-list">
+        @foreach (var channel in Model)
+        {
+            <option value="@channel.Id">@channel.Name</option>
+        }
+    </select>
+    <input type="button" value="Add new channel" class="btn btn-primary" style="margin-top:15px" data-toggle="modal" data-target="#add-new-channel-modal" />
+</div>
+
+<div class="modal" id="add-new-channel-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form id="new-channel-form">
+                    <div class="form-group">
+                        <label>Channel name</label>
+                        <input type="text" class="form-control" id="ChannelName" name="ChannelName" />
+                    </div>
+                    <div class="form-group">
+                        <label>Channel description</label>
+                        <textarea class="form-control" name="ChannelDescription" id="ChannelDescription"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <input type="button" id="add-new-channel-button" class="btn btn-primary" value="Save changes" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#add-new-channel-button").click(function () {
+        var formObj = $("#new-channel-form").serialize();
+        $.ajax({
+            url: "@Url.Action("AddNewChannel","Video")",
+            method: "POST",
+            dataType: "json",
+            data: formObj,
+            success: function(result) {
+                if (result.Success == true) {
+                    $("#channel-dropdown-list").append("<option value= '"+ result.NewChannel.Id +"'> "+ result.NewChannel.Name +"</option>");
+                    $("#add-new-channel-modal").modal("hide");
+                }
+            },
+            error: function (result) {
+
+            }
+        });
+    });
+
+</script>
